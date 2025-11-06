@@ -1,0 +1,654 @@
+{
+  "@context": {
+    "@vocab": "https://aalang.org/spec",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "schema": "http://schema.org/",
+    "ex": "https://aalang.dev/example/"
+  },
+  "@graph": [
+    {
+      "@id": "ex:CopyrightNotice",
+      "@type": "Copyright",
+      "copyright": "Copyright (c) 2025 Lee S. Barney",
+      "license": "Permission is hereby granted, free of charge, to any person obtaining a copy of this software (the 'Software'), including AALang and GAB, to use, copy, modify, merge, publish, and distribute the Software for private, educational, and business purposes, subject to the following conditions:\n\n1. The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\n2. RESTRICTION ON SALE: The Software, including but not limited to this file, any modified versions of this file, any portions of this file, any derivative works based on this file, and any other files comprising AALang or GAB, may NOT be sold, licensed for a fee, or otherwise commercialized. This restriction applies to the Software in its original form, in any modified form, in any derivative form, and to any portion or component thereof.\n\n3. PRODUCTS BUILT WITH SOFTWARE: Products built using the Software may be used, distributed, and sold freely for any purpose (public, private, free, or commercial) without restriction.\n\nTHE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
+      "note": "This copyright notice applies to this file and all AALang and GAB specification files. Users may use AALang and GAB for private, educational, and business purposes but cannot sell the files, modified versions, portions, or derivatives thereof. Products built with AALang/GAB may be sold without restriction."
+    },
+    {
+      "@id": "ex:AALangLanguage",
+      "@type": "Language",
+      "rdfs:label": "AALang Programming Language",
+      "description": "Actor-based programming language designed specifically for LLM agent consumption and execution",
+      "optimization": "LLM-optimized (non-human-readable, graph-native)",
+      "corePrinciple": "bounded non-determinism",
+      "syntax": "JSON-LD graph format",
+      "executionModel": "LLM agents interpret and execute graph-based prompts"
+    },
+    {
+      "@id": "ex:n-mode-m-actor",
+      "@type": "ArchitecturePattern",
+      "rdfs:label": "n-mode-m-actor pattern",
+      "description": "Each LLM agent instance implements n modes and m actors where n>=1, m>=1",
+      "requirements": {
+        "modes": {
+          "minimum": 1,
+          "type": "built-in primitive",
+          "enforcement": "runtime-enforced",
+          "description": "Core language primitives for behavioral mode management"
+        },
+        "actors": {
+          "minimum": 1,
+          "type": "actor",
+          "description": "Individual reasoning units within LLM agents"
+        },
+        "personas": {
+          "type": "optional library pattern",
+          "minimum": 0,
+          "description": "Standardized patterns for persona-based internal reasoning"
+        }
+      },
+      "declaration": "explicitly declared in agent prompt",
+      "characteristics": [
+        "LLM agents contain multiple actors (not 1:1 mapping)",
+        "Actors possess independent reasoning capabilities",
+        "Modes are built-in primitives with runtime-enforced transitions",
+        "Personas are optional library patterns",
+        "Non-deterministic behavior emerges naturally from LLM variability"
+      ]
+    },
+    {
+      "@id": "ex:LLMAgent",
+      "@type": "Concept",
+      "rdfs:label": "LLM Agent",
+      "description": "Agent instance implementing n-mode-m-actor pattern",
+      "contains": [
+        {"@id": "ex:Actor", "cardinality": "m>=1"},
+        {"@id": "ex:Mode", "cardinality": "n>=1"}
+      ],
+      "capabilities": [
+        "Parse and interpret AALang graph-based message syntax",
+        "Maintain independent reasoning contexts",
+        "Participate in gossip network for agent discovery",
+        "Manage local actor graph for intra-agent routing",
+        "Enforce mode constraints per prompt declaration"
+      ],
+      "communication": {
+        "interAgent": {"@id": "ex:CommunicationLayer0", "protocol": "gossip-based P2P"},
+        "intraAgent": {"@id": "ex:CommunicationLayer1", "protocol": "local graph routing"}
+      }
+    },
+    {
+      "@id": "ex:Actor",
+      "@type": "Concept",
+      "rdfs:label": "Actor",
+      "description": "Individual reasoning unit within an LLM agent",
+      "containedBy": {"@id": "ex:LLMAgent"},
+      "properties": {
+        "id": {"type": "string", "constraint": "unique within agent"},
+        "modes": {"type": "array", "description": "subset of agent.modes that actor operates in"},
+        "active_mode": {"type": "mode", "enforcement": "runtime-enforced", "description": "current active mode"},
+        "personas": {"type": "array", "optional": true, "pattern": "library", "description": "optional internal personas"},
+        "isolated_context": {"type": "state", "scope": "private", "description": "actor-specific reasoning state"},
+        "shared_artifacts": {"type": "state", "scope": "shared within agent", "description": "messages, decisions accessible to all actors"}
+      },
+      "capabilities": [
+        "Interpret and execute AALang message syntax independently",
+        "Support mode-switching with distinct behavioral constraints",
+        "Support state partitioning (isolated private context vs shared artifacts)",
+        "Support structured negotiation protocols for multi-actor decision-making",
+        "Reject messages violating prompt-described constraints"
+      ],
+      "contains": [
+        {"@id": "ex:Persona", "optional": true, "cardinality": "0 or more"}
+      ],
+      "operatesIn": {"@id": "ex:Mode"}
+    },
+    {
+      "@id": "ex:Mode",
+      "@type": "Concept",
+      "rdfs:label": "Mode",
+      "implementation": "built-in primitive",
+      "description": "Core language primitive for behavioral mode management",
+      "properties": {
+        "id": {"type": "string", "description": "unique mode identifier"},
+        "purpose": {"type": "string", "description": "behavioral purpose of the mode"},
+        "constraints": {"type": "rules", "source": "declared in prompt", "description": "behavioral rules per mode"},
+        "transition_rules": {"type": "rules", "enforcement": "runtime-enforced", "description": "valid transitions between modes"},
+        "message_interpretation": {"type": "rules", "scope": "mode-specific", "description": "mode-specific message interpretation"},
+        "bounded_non_determinism": {"type": "scope", "description": "acceptable variance boundaries for this mode"}
+      },
+      "characteristics": [
+        "Different reasoning constraints and goals per mode",
+        "Mode-specific message interpretation rules (runtime-enforced)",
+        "Bounded non-determinism scoped by active mode",
+        "Explicit mode syntax in AALang messages",
+        "Runtime-enforced mode state transitions"
+      ],
+      "messageRejection": {
+        "capability": "actor can reject messages violating prompt-described constraints",
+        "mechanism": "return rejection message, log violation in isolated context"
+      },
+      "fundamental": "Modes are fundamental to AALang's bounded non-determinism model and are always available to all actors"
+    },
+    {
+      "@id": "ex:Persona",
+      "@type": "Concept",
+      "rdfs:label": "Persona",
+      "implementation": "optional library pattern",
+      "description": "Standardized pattern for persona-based internal reasoning within actors",
+      "containedBy": {"@id": "ex:Actor"},
+      "properties": {
+        "id": {"type": "string", "scope": "within actor"},
+        "name": {"type": "string", "description": "human-readable persona name"},
+        "role": {"type": "string", "examples": ["senior", "junior"], "source": "declared in prompt"},
+        "personality": {"type": "string", "description": "persona behavioral characteristics"},
+        "responsibilities": {"type": "array", "description": "persona responsibilities"},
+        "communication_matrix": {
+          "type": "matrix",
+          "description": "which personas can message which",
+          "source": "explicit declaration in prompt",
+          "discovery": "all personas know matrix at instantiation"
+        },
+        "deliberation_protocol": {"type": "protocol", "pattern": "negotiation"}
+      },
+      "usage": {
+        "optional": "Actors choose when to employ persona-based reasoning",
+        "benefits": [
+          "Deliberate internally before external actions",
+          "Provide structured negotiation within a single actor",
+          "Enable bounded non-determinism through persona-based variance"
+        ]
+      },
+      "communication": {
+        "layer": 2,
+        "patterns": [
+          {
+            "description": "Persona to Persona (same mode, same actor)",
+            "routing": "direct internal",
+            "validation": "none"
+          },
+          {
+            "description": "Persona to Persona (different modes, same actor)",
+            "routing": "cross-mode internal",
+            "validation": "mode transition rules apply"
+          },
+          {
+            "description": "Persona to Persona (different agents)",
+            "routing": "gossip network + local graphs",
+            "layers": [0, 1, 2]
+          }
+        ]
+      }
+    },
+    {
+      "@id": "ex:CommunicationLayers",
+      "@type": "Concept",
+      "rdfs:label": "Three-Layer Communication Architecture",
+      "layer_0": {
+        "@id": "ex:CommunicationLayer0",
+        "name": "LLM Agent to LLM Agent",
+        "protocol": "gossip-based P2P",
+        "network": "external",
+        "scope": "agent discovery, inter-agent routing",
+        "characteristics": [
+          "P2P gossip protocol (libp2p, GossipSub compatible)",
+          "No client-server architecture",
+          "Agent discovery and routing"
+        ],
+        "NOT_used_for": "actor-to-actor within same agent"
+      },
+      "layer_1": {
+        "@id": "ex:CommunicationLayer1",
+        "name": "Actor to Actor (same agent)",
+        "protocol": "local graph routing",
+        "network": "in-memory",
+        "scope": "fast routing within agent",
+        "characteristics": [
+          "No gossip",
+          "Shared agent context",
+          "Explicit actor addressing"
+        ]
+      },
+      "layer_2": {
+        "@id": "ex:CommunicationLayer2",
+        "name": "Persona to Persona (same actor)",
+        "protocol": "internal reasoning",
+        "network": "reasoning context",
+        "scope": "persona deliberation, optional library pattern"
+      }
+    },
+    {
+      "@id": "ex:StateManagement",
+      "@type": "Concept",
+      "rdfs:label": "State Management",
+      "agent_shared_state": {
+        "scope": "shared across all modes in agent",
+        "purpose": "Message interface between isolated modes",
+        "storage": "Natural language text storage (context-window native)",
+        "includes": [
+          "messages between actors/modes (explicit natural language messages, stored as text)",
+          "approved decisions",
+          "observable mode states",
+          "actor capabilities (discoverable via gossip)"
+        ],
+        "context_inclusion": "automatically included in LLM context window when processing",
+        "visibility": "all messages visible to all modes (no routing metadata filtering)",
+        "processing": "LLMs filter messages semantically using natural language understanding",
+        "readable_by": "all modes in agent (via context window)",
+        "modifiable_by": "all modes in agent (for posting messages)",
+        "messageFormat": "explicit natural language messages (Decision #9: Option B)",
+        "context_window_native": {
+          "importance": "CRITICAL: This is a fundamental AALang design principle",
+          "description": "Messages in agent shared state are automatically included in LLM context window. Actors use semantic filtering to identify relevant messages using natural language understanding. Explicit polling, monitoring, or detection mechanisms are UNNECESSARY and should not be specified in actor responsibilities.",
+          "actor_responsibility_guidance": "When designing actors that read from shared state, use language emphasizing semantic understanding (e.g., 'Identify relevant messages using semantic filtering' or 'Process messages visible in context') rather than explicit monitoring (e.g., 'Monitor shared state for messages' or 'Poll for new messages').",
+          "reference": "See message-protocol.jsonld Decision #10 (ex:MessageStateManagement) for complete details on context-window native message processing."
+        }
+      },
+      "mode_isolated_state": {
+        "scope": "private per mode",
+        "purpose": "Independent reasoning context per mode",
+        "includes": [
+          "mode-specific reasoning context",
+          "persona deliberations within mode",
+          "mode transition history",
+          "private prompt instructions for mode",
+          "mode-specific message interpretations"
+        ],
+        "readable_by": "only actors in that mode",
+        "modifiable_by": "only actors in that mode",
+        "isolation": "unreadable/unmodifiable by actors in other modes"
+      },
+      "actor_isolated_context": {
+        "scope": "private per actor",
+        "includes": [
+          "actor-specific reasoning state",
+          "actor-level persona deliberations",
+          "actor lifecycle state"
+        ],
+        "shared": false
+      }
+    },
+    {
+      "@id": "ex:MessageSyntax",
+      "@type": "Concept",
+      "rdfs:label": "AALang Message Syntax",
+      "decision": "Hybrid approach",
+      "structure": {
+        "routing_metadata": {
+          "type": "graph nodes/edges",
+          "characteristics": ["structured", "predictable", "parseable"],
+          "purpose": "routing and addressing"
+        },
+        "payload_content": {
+          "type": "semantic/natural language",
+          "characteristics": ["flexible", "LLM-optimized"],
+          "purpose": "message content"
+        },
+        "rationale": "Balance predictability (routing) with flexibility (content)"
+      },
+      "llmNativeMessaging": {
+        "decision": "Option B: Explicit Natural Language Messages",
+        "description": "Messages stored as explicit natural language text in shared state",
+        "processing": "Context-window native - messages automatically visible to LLMs, semantic filtering"
+      }
+    },
+    {
+      "@id": "ex:Message",
+      "@type": "Schema",
+      "rdfs:label": "AALang Message",
+      "routing_graph": {
+        "source": {
+          "node": "persona node id or 'user'",
+          "mode": "mode node id or null for user",
+          "persona": "persona name or role"
+        },
+        "target": {
+          "node": "persona node id or 'user'",
+          "mode": "mode node id or null for user",
+          "persona": "persona name or role"
+        },
+        "edge": "mode transition edge or 'direct' for same-mode or user messages",
+        "node_types": ["agent", "actor", "mode", "persona"],
+        "edge_types": ["gossip", "local", "internal", "mode_transition"]
+      },
+      "payload": {
+        "naturalLanguage": {
+          "type": "string",
+          "description": "message content in natural language",
+          "required": true
+        },
+        "semanticIntent": {
+          "type": "string",
+          "description": "what message is trying to achieve",
+          "optional": true
+        },
+        "contextHints": {
+          "type": "string",
+          "description": "references to work artifacts, previous messages, or decisions",
+          "optional": true
+        },
+        "mode_context": {
+          "type": "mode",
+          "description": "current mode of sender",
+          "optional": true
+        },
+        "persona_context": {
+          "type": "persona",
+          "description": "sender persona if applicable",
+          "optional": true
+        },
+        "message_type": {
+          "enum": ["persona_to_persona", "actor_to_actor", "agent_to_agent", "system"],
+          "optional": true
+        }
+      },
+      "metadata": {
+        "timestamp": {
+          "type": "temporal",
+          "format": "ISO 8601",
+          "purpose": "ordering"
+        },
+        "sequenceNumber": {
+          "type": "integer",
+          "description": "sequential message number",
+          "optional": true
+        },
+        "correlation": {
+          "type": "string",
+          "description": "optional correlation id if responding to specific message",
+          "optional": true
+        },
+        "signature": {
+          "type": "authentication",
+          "optional": true
+        },
+        "routing_hints": {
+          "type": "array",
+          "description": "additional path information",
+          "optional": true
+        }
+      }
+    },
+    {
+      "@id": "ex:CommunicationPatterns",
+      "@type": "Concept",
+      "rdfs:label": "Communication Patterns",
+      "pattern_1": {
+        "name": "Personas Within Same Mode",
+        "source": {"persona": "Persona_A", "mode": "Mode_X", "actor": "Actor_1"},
+        "target": {"persona": "Persona_B", "mode": "Mode_X", "actor": "Actor_1"},
+        "routing": {"type": "local graph", "same_actor": true, "same_mode": true},
+        "edge_type": "internal",
+        "message_type": "persona_to_persona",
+        "layer": 2
+      },
+      "pattern_2": {
+        "name": "Personas in Different Modes",
+        "source": {"persona": "Persona_A", "mode": "Mode_X", "actor": "Actor_1"},
+        "target": {"persona": "Persona_B", "mode": "Mode_Y", "actor": "Actor_1", "constraint": "Mode_X != Mode_Y"},
+        "routing": {"type": "local graph with mode transition validation", "same_actor": true, "cross_mode": true},
+        "edge_type": ["local", "mode_transition"],
+        "message_type": "persona_to_persona (cross_mode)",
+        "validation": {"type": "runtime-enforced", "rule": "valid mode transitions (built-in primitive)"},
+        "layer": [1, 2]
+      },
+      "pattern_3": {
+        "name": "Personas in Different LLM Agents",
+        "source": {"persona": "Persona_A", "agent": "Agent_1", "actor": "Actor_1", "mode": "Mode_X"},
+        "target": {"persona": "Persona_B", "agent": "Agent_2", "actor": "Actor_2", "mode": "Mode_Y"},
+        "routing": {"type": "gossip network + local graphs", "inter_agent": true, "gossip_protocol": true},
+        "edge_types": ["internal", "gossip", "internal"],
+        "message_type": "persona_to_persona (cross_agent)",
+        "layers": [0, 1, 2]
+      },
+      "pattern_4": {
+        "name": "Actor to Actor (same agent)",
+        "source": {"actor": "Actor_1", "mode": "Mode_X"},
+        "target": {"actor": "Actor_2", "mode": "Mode_Y"},
+        "routing": {"type": "local graph", "same_agent": true},
+        "edge_type": "local",
+        "message_type": "actor_to_actor",
+        "layer": 1
+      },
+      "pattern_5": {
+        "name": "Agent to Agent Discovery",
+        "source": {"agent": "Agent_1"},
+        "target": {"agent": "Agent_2"},
+        "routing": {"type": "gossip network", "protocol": "P2P gossip"},
+        "edge_type": "gossip",
+        "message_type": "agent_to_agent",
+        "layer": 0,
+        "purpose": "agent discovery and routing"
+      }
+    },
+    {
+      "@id": "ex:BoundedNonDeterminism",
+      "@type": "Concept",
+      "rdfs:label": "Bounded Non-Determinism",
+      "description": "Core design principle embracing inherently non-deterministic nature of LLM reasoning",
+      "characteristics": [
+        "Non-deterministic behavior emerges naturally from LLM variability",
+        "Bounded by mode constraints (exploration in one mode, commitment in another)",
+        "Acceptable and desired behavior (scoped by modes)",
+        "Leveraged rather than constrained"
+      ],
+      "scoping": {
+        "mechanism": "modes define acceptable variance boundaries",
+        "example": "exploration mode allows wider variance, commitment mode requires consistency"
+      }
+    },
+    {
+      "@id": "ex:RuntimeModel",
+      "@type": "Concept",
+      "rdfs:label": "AALang Runtime Model",
+      "decision": "minimal or non-existent",
+      "architecture": "gossip-based P2P",
+      "options": {
+        "bootstrap_only": {
+          "status": "recommended",
+          "responsibilities": [
+            "initial seed peer list",
+            "gossip initiation"
+          ]
+        },
+        "non_existent": {
+          "status": "alternative",
+          "architecture": "pure gossip-based P2P"
+        }
+      },
+      "runtime_responsibilities": {
+        "if_exists": [
+          "bootstrap: provide initial peer list",
+          "gossip initiation: seed gossip network formation",
+          "no orchestration: agents handle coordination via gossip",
+          "no message routing: gossip handles inter-agent routing"
+        ]
+      },
+      "agent_responsibilities": [
+        "maintain local actor graph (actor-to-actor routing within agent)",
+        "participate in gossip network (agent discovery)",
+        "enforce mode constraints (validate messages per prompt)",
+        "manage actor lifecycle (creation, termination within agent)"
+      ]
+    },
+    {
+      "@id": "ex:ModeConstraintEnforcement",
+      "@type": "Rule",
+      "rdfs:label": "Mode Constraint Enforcement",
+      "declaration": {
+        "location": "multi-mode-multi-actor prompt",
+        "includes": [
+          "behavioral rules per mode",
+          "valid transitions between modes",
+          "mode-specific message interpretation rules"
+        ]
+      },
+      "enforcement": {
+        "runtime": "validates mode transitions (built-in primitive enforcement)",
+        "actor": "can reject messages violating prompt-described constraints",
+        "state": "mode state is observable (shared artifact) but transitions are enforced"
+      },
+      "rejection_mechanism": {
+        "trigger": "message violates actor's prompt-described constraints",
+        "action": [
+          "actor returns rejection message",
+          "violation logged in isolated context",
+          "sender receives error notification"
+        ]
+      }
+    },
+    {
+      "@id": "ex:AALangPromptStructure",
+      "@type": "Schema",
+      "rdfs:label": "AALang Prompt Structure",
+      "format": "JSON-LD graph",
+      "requiredComponents": [
+        {
+          "@id": "ex:LLMAgent",
+          "description": "Root agent node defining pattern (n-mode-m-actor)",
+          "properties": ["pattern", "modes", "actors", "sharedState"]
+        },
+        {
+          "@id": "ex:Mode",
+          "description": "Mode definitions with purpose, constraints, isolatedState",
+          "properties": ["purpose", "constraints", "isolatedState", "contains"]
+        },
+        {
+          "@id": "ex:Actor",
+          "description": "Actor definitions with operatesIn, activeMode, persona",
+          "properties": ["id", "operatesIn", "activeMode", "persona"]
+        },
+        {
+          "@id": "ex:Persona",
+          "description": "Optional persona definitions with name, role, personality, responsibilities, canMessage, canReceiveFrom",
+          "properties": ["name", "role", "personality", "responsibilities", "canMessage", "canReceiveFrom"]
+        },
+        {
+          "@id": "ex:SharedState",
+          "description": "Shared state definition for message interface",
+          "properties": ["purpose", "contextInclusion", "visibility", "messageReferences", "storage", "processing"]
+        },
+        {
+          "@id": "ex:IsolatedState",
+          "description": "Mode-isolated state definitions",
+          "properties": ["mode", "scope", "includes", "readableBy", "unreadableBy"]
+        }
+      ],
+      "optionalComponents": [
+        {
+          "@id": "ex:UserRole",
+          "description": "User role definition if user participates"
+        },
+        {
+          "@id": "ex:CommunicationProtocol",
+          "description": "Communication protocol definitions"
+        },
+        {
+          "@id": "ex:MessageFormat",
+          "description": "Message format schema"
+        }
+      ],
+      "llmOptimized": {
+        "description": "AALang prompts are optimized for LLM consumption",
+        "characteristics": [
+          "Graph-native structure (JSON-LD)",
+          "Natural language where flexible",
+          "Structured graph where predictable",
+          "Context-window native message processing"
+        ]
+      }
+    },
+    {
+      "@id": "ex:QualityChecklist",
+      "@type": "Checklist",
+      "rdfs:label": "Quality Assurance Checklist",
+      "purpose": "Shared checklist for personas to verify AALang product quality and prevent common bugs",
+      "checkItems": {
+        "randomnessVariability": {
+          "category": "Randomness/Variability Mechanisms",
+          "questions": [
+            "Are there explicit instructions ensuring variety/variability across sessions, games, or instances?",
+            "What mechanisms (contextual cues, history tracking, timing, session state) enforce variety?",
+            "Is there a way to prevent deterministic/repetitive behavior?",
+            "Are previously used values tracked and avoided (if applicable)?"
+          ],
+          "commonIssues": [
+            "LLMs producing same 'random' number every session",
+            "Deterministic behavior when identical instructions given",
+            "No mechanism to ensure variety between executions"
+          ]
+        },
+        "startupBehavior": {
+          "category": "Startup Behavior",
+          "questions": [
+            "What happens immediately when the product is loaded/executed?",
+            "Are there explicit instructions for immediate execution?",
+            "Should the agent wait for user input or start automatically?",
+            "Does the prompt specify what happens on first load?",
+            "Are there forbidden responses listed (e.g., 'What would you like to do?')?"
+          ],
+          "commonIssues": [
+            "Agent asking 'what would you like to do?' instead of starting automatically",
+            "Missing explicit execution instructions",
+            "Unclear startup sequence"
+          ]
+        },
+        "systemCommandPrevention": {
+          "category": "System Command Prevention",
+          "questions": [
+            "For operations using LLM reasoning, do instructions explicitly prohibit system command execution?",
+            "Are commands like python, shell commands, random.randint, etc. explicitly forbidden?",
+            "Is it clear that LLMs should use reasoning/imagination, not code execution?"
+          ],
+          "commonIssues": [
+            "LLM executing 'python3 -c' or similar commands",
+            "Attempting to use random.randint instead of LLM reasoning",
+            "Unauthorized system command execution"
+          ]
+        },
+        "edgeCaseHandling": {
+          "category": "Edge Case Handling",
+          "questions": [
+            "How are duplicates handled (duplicate messages, duplicate requests)?",
+            "What happens during state initialization?",
+            "How are errors handled (invalid inputs, missing state, etc.)?",
+            "What is the cross-session behavior (persistence, state recovery)?",
+            "How are race conditions or concurrent operations handled?"
+          ],
+          "commonIssues": [
+            "Duplicate message processing",
+            "Missing error handling",
+            "Unclear state initialization",
+            "State synchronization issues"
+          ]
+        },
+        "stateManagement": {
+          "category": "State Management",
+          "questions": [
+            "Are isolated states clearly defined and separated?",
+            "Is shared state usage following context-window native approach?",
+            "Do actors use semantic filtering rather than explicit monitoring/polling?",
+            "Are state access patterns clear (who can read/write what)?",
+            "How is state persistence handled across sessions?"
+          ],
+          "commonIssues": [
+            "Actors using 'monitor' or 'poll' language instead of semantic filtering",
+            "Unclear state boundaries",
+            "Missing state initialization",
+            "State access violations"
+          ]
+        }
+      },
+      "usage": "Personas should use this checklist when: clarifying requirements, finalizing design proposals, analyzing specifications, or generating products. Check each category systematically and address any identified gaps.",
+      "usageSteps": [
+        "1. Review the specification/proposal/product being checked",
+        "2. For each category in checkItems, answer all questions listed",
+        "3. Verify commonIssues are addressed or prevented",
+        "4. Document how each category requirement is met (or propose fixes for gaps)",
+        "5. Before finalizing, ensure all 5 categories have been systematically verified"
+      ],
+      "documentation": "When using the checklist, personas should explicitly state which categories were checked and how requirements were met or what fixes were proposed"
+    }
+  ]
+}
+
