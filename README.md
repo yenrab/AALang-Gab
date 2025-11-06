@@ -1,6 +1,6 @@
 # GAB - Generic AALang Builder
 
-**GAB** (Generic AALang Builder) is an intelligent agent that helps you build AALang-based products including tools, games, agents, protocols, and more. GAB uses a structured 4-mode workflow to guide you through the entire development process, from initial concept to final product.
+**GAB** (Generic AALang Builder) is an intelligent agent compiler that helps you build AALang-based products including tools, games, agents, protocols, and more. GAB uses a structured 4-mode workflow to guide you through the entire development process, from initial concept to final product.
 
 ## What is AALang?
 
