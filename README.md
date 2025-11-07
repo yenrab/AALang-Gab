@@ -1,5 +1,26 @@
 # AALang and GAB
 
+## Why AALang?
+
+**AALang is the first programming language designed to run entirely within the LLM.** Unlike traditional prompt engineering approaches that rely on ad-hoc instructions and unstructured conversations, AALang provides a formal, graph-native language specification that LLMs execute with **greater consistency and fewer hallucinations**.
+
+**The Problem with Standard Prompt Engineering:**
+- Inconsistent behavior across sessions
+- Hallucinations and unpredictable outputs
+- Difficult to maintain and version control
+- No formal structure for complex agent behaviors
+- Hard to debug and reason about
+
+**The AALang Solution:**
+- ✅ **Formal Language Specification**: JSON-LD graph format provides structure and consistency
+- ✅ **Reduced Hallucinations**: Explicit mode constraints and actor responsibilities guide LLM behavior
+- ✅ **Version Control**: Language specifications are code, not prompts - track changes, review diffs, collaborate
+- ✅ **Reproducible Results**: Same specification produces consistently bounded behavior across different LLM instances
+- ✅ **Built for LLMs**: Designed from the ground up for LLM execution, not adapted from human-readable languages
+- ✅ **Graph-Native**: Leverages LLMs' natural ability to understand graph structures and relationships
+
+**Build production-ready LLM agents with the consistency of code and the flexibility of natural language.**
+
 **GAB** (Generic AALang Builder) is an intelligent agent compiler that helps you build AALang-based products including tools, games, agents, protocols, and more. GAB uses a structured 4-mode workflow to guide you through the entire development process, from initial concept to final product compiled to AALang.
 
 ## What is AALang?
