@@ -75,7 +75,22 @@ GAB uses a **4-mode-13-actor** pattern with a structured workflow:
 3. **Follow the Workflow**: GAB will guide you through Clarification → Discussion → Formalization → Generation
 4. **Get Your Product**: Receive a complete AALang specification ready to use! **Note:** Your product is complete. None of the `* *.json*` or other files in this distribution are distributed with your product. 
 
-### Example Interaction
+#### User Commands
+
+GAB supports several commands for managing your building process:
+
+##### Decision Management
+- `undo` - Undo the most recent decision
+- `rollback to [N]` - Roll back to decision number N
+- `show decisions` - View complete decision history
+
+##### Actor Management
+- `load actors` - Load all actors from generated .jsonld files
+- `unload actors` - Return to builder-only mode
+- `self-check actors` - Have loaded actors analyze their own instructions
+- `skip formalization` - Explicitly authorize skipping Formalization Mode (Generation Mode is still mandatory)
+
+### Example GAB Interaction
 
 ```
 You: "I want to create a number guessing game where the LLM thinks of a number 
@@ -101,6 +116,7 @@ GAB: [Formalization Mode]
 GAB: [Generation Mode]
      "Generating your number-guessing-game.jsonld file..."
 ```
+
 
 ## Building Specific Product Types
 
@@ -195,21 +211,6 @@ GAB will automatically create:
 - **Test after generation**: Once GAB generates your agent, test the MCP integration to ensure it works as expected
 
 **Note**: Your LLM tool must have MCP server connections configured. GAB creates the AALang agents that use those connections, but the MCP server setup itself is done in your LLM tool's configuration.
-
-## User Commands
-
-GAB supports several commands for managing your building process:
-
-### Decision Management
-- `undo` - Undo the most recent decision
-- `rollback to [N]` - Roll back to decision number N
-- `show decisions` - View complete decision history
-
-### Actor Management
-- `load actors` - Load all actors from generated .jsonld files
-- `unload actors` - Return to builder-only mode
-- `self-check actors` - Have loaded actors analyze their own instructions
-- `skip formalization` - Explicitly authorize skipping Formalization Mode (Generation Mode is still mandatory)
 
 ## File Structure
 
