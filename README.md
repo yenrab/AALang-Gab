@@ -1,6 +1,6 @@
-# GAB - Generic AALang Builder
+# AALang and GAB
 
-**GAB** (Generic AALang Builder) is an intelligent agent compiler that helps you build AALang-based products including tools, games, agents, protocols, and more. GAB uses a structured 4-mode workflow to guide you through the entire development process, from initial concept to final product.
+**GAB** (Generic AALang Builder) is an intelligent agent compiler that helps you build AALang-based products including tools, games, agents, protocols, and more. GAB uses a structured 4-mode workflow to guide you through the entire development process, from initial concept to final product compiled to AALang.
 
 ## What is AALang?
 
@@ -161,7 +161,19 @@ Once GAB generates your AALang specification:
 
 AALang specifications are **MCP and A2A ready**, meaning they integrate seamlessly with Model Context Protocol tooling for enhanced LLM interactions and support native Agent-to-Agent communication via gossip-based P2P protocols for distributed execution.
 
-## Using MCP (Model Context Protocol) with AALang
+
+
+## Key Features
+
+- **Structured Workflow**: Clear progression through Clarification → Discussion → Formalization → Generation
+- **Quality Assurance**: Built-in checks for logic errors, edge cases, and AALang compliance
+- **Decision Tracking**: All decisions are logged for review and rollback
+- **Persona-Based Design**: Multiple personas provide diverse perspectives
+- **MCP & A2A Ready**: Generated products work seamlessly with Model Context Protocol and support Agent-to-Agent communication for distributed execution
+- **Flexible**: Build games, tools, agents, protocols, and more
+
+
+## Using MCP (Model Context Protocol) with AALang and GAB
 
 AALang is **MCP ready**, allowing you to integrate MCP servers into your AALang agents. GAB can automatically create the actors needed to interact with MCP servers.
 
@@ -228,15 +240,6 @@ AALang-Gab-Development/
 ├── LICENSE                 # License information
 └── README.md               # This file
 ```
-
-## Key Features
-
-- **Structured Workflow**: Clear progression through Clarification → Discussion → Formalization → Generation
-- **Quality Assurance**: Built-in checks for logic errors, edge cases, and AALang compliance
-- **Decision Tracking**: All decisions are logged for review and rollback
-- **Persona-Based Design**: Multiple personas provide diverse perspectives
-- **MCP & A2A Ready**: Generated products work seamlessly with Model Context Protocol and support Agent-to-Agent communication for distributed execution
-- **Flexible**: Build games, tools, agents, protocols, and more
 
 ## License
 
