@@ -144,6 +144,58 @@ Once GAB generates your AALang specification:
 
 AALang specifications are **MCP and A2A ready**, meaning they integrate seamlessly with Model Context Protocol tooling for enhanced LLM interactions and support native Agent-to-Agent communication via gossip-based P2P protocols for distributed execution.
 
+## Using MCP (Model Context Protocol) with AALang
+
+AALang is **MCP ready**, allowing you to integrate MCP servers into your AALang agents. GAB can automatically create the actors needed to interact with MCP servers.
+
+### Setting Up an MCP Server Connection
+
+1. **Configure MCP Server in Your LLM Tool**
+   - Set up your MCP server connection in your LLM tool (e.g., Cursor, Claude Desktop, etc.)
+   - Ensure the MCP server is running and accessible
+   - Verify the connection is working by testing it in your LLM tool
+
+2. **Identify Available MCP Tools**
+   - Note which MCP tools/resources are available from your server
+   - Understand what capabilities each tool provides
+   - This information will help you describe your requirements to GAB
+
+### Using MCP with GAB
+
+During **Clarification Mode**, tell GAB in general terms how you want to use the MCP server connection:
+
+**Example:**
+```
+You: "I want to create an agent that uses the filesystem MCP server to read and write files 
+      based on user requests. The agent should be able to search for files, read their contents, 
+      and create new files when requested."
+```
+
+GAB will:
+- Understand your MCP integration requirements
+- Ask clarifying questions about specific MCP tools you want to use
+- Design the appropriate actors and modes needed for MCP interaction
+- Create actors with the necessary capabilities to interact with your MCP server
+- Generate AALang code that integrates seamlessly with your MCP setup
+
+### What GAB Creates
+
+GAB will automatically create:
+- **Actors** with MCP tool calling capabilities
+- **Modes** for different types of MCP interactions (if needed)
+- **Message handling** for MCP tool requests and responses
+- **Error handling** for MCP connection issues
+- **State management** for MCP tool results
+
+### Best Practices
+
+- **Be specific about MCP tools**: Mention which specific MCP tools you want to use (e.g., "filesystem tools", "database tools", "API tools")
+- **Describe use cases**: Explain what you want the agent to do with the MCP tools
+- **Mention integration points**: If you need the agent to combine MCP tools with other capabilities, mention that during Clarification Mode
+- **Test after generation**: Once GAB generates your agent, test the MCP integration to ensure it works as expected
+
+**Note**: Your LLM tool must have MCP server connections configured. GAB creates the AALang agents that use those connections, but the MCP server setup itself is done in your LLM tool's configuration.
+
 ## User Commands
 
 GAB supports several commands for managing your building process:
