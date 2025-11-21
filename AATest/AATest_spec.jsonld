@@ -7,12 +7,43 @@
   },
   "@graph": [
     {
+      "@id": "ex:TestTypes",
+      "@type": "TestTypes",
+      "rdfs:label": "AALang Test Types",
+      "description": "Definition of all supported AALang test types",
+      "types": [
+        {
+          "@id": "ex:MessageResponseTestType",
+          "name": "MessageResponseTest",
+          "description": "Tests how individual actors respond to messages - tests individual actor responsibilities in isolation",
+          "filePattern": "{product-name}-message-response-tests.jsonld",
+          "purpose": "Test individual actor behavior when receiving messages"
+        },
+        {
+          "@id": "ex:MessageFlowTestType",
+          "name": "MessageFlowTest",
+          "description": "Tests message flow between actors, mode transitions, and state management - tests actor interactions",
+          "filePattern": "{product-name}-message-flow-tests.jsonld",
+          "purpose": "Test actor-to-actor communication, mode transitions, and state management"
+        },
+        {
+          "@id": "ex:AgentWorkflowTestType",
+          "name": "AgentWorkflowTest",
+          "description": "Tests complete agent workflows from user perspective - tests end-to-end workflows and full agent execution",
+          "filePattern": "{product-name}-agent-workflow-tests.jsonld",
+          "purpose": "Test complete agent workflows and end-to-end execution"
+        }
+      ],
+      "typeNames": ["MessageResponseTest", "MessageFlowTest", "AgentWorkflowTest"]
+    },
+    {
       "@id": "ex:TestSpecification",
       "@type": "TestSpec",
       "rdfs:label": "AALang Test Specification",
-      "description": "Complete specification for AALang test structures including unit, integration, and system tests",
-      "testTypes": ["UnitTest", "IntegrationTest", "SystemTest"],
+      "description": "Complete specification for AALang test structures based on messages passed and results observed. Tests send AALang messages to actors and observe the resulting messages, state changes, and behaviors.",
+      "testTypes": "ex:TestTypes",
       "testStructure": {
+        "note": "AALang tests are message-based: tests send AALang messages to actors and observe resulting messages, state changes, and behaviors. All test inputs are messages, and all test outputs are observed results from message processing.",
         "metadata": {
           "name": {
             "type": "string",
@@ -22,13 +53,13 @@
           "description": {
             "type": "string",
             "required": true,
-            "description": "Test description explaining what is being tested"
+            "description": "Test description explaining what messages are sent, what actor/mode/workflow is being tested, and what results are expected to be observed"
           },
           "type": {
             "type": "enum",
             "required": true,
-            "values": ["UnitTest", "IntegrationTest", "SystemTest"],
-            "description": "Test type classification"
+            "values": "ex:TestTypes.typeNames",
+            "description": "Test type classification - see ex:TestTypes for complete test type definitions"
           },
           "priority": {
             "type": "number",
@@ -48,18 +79,126 @@
         },
         "inputs": {
           "type": "object",
-          "description": "Test input definitions",
+          "description": "Messages to send during test execution",
+          "required": true,
           "properties": {
-            "testInput": "any",
-            "description": "Input data or configuration for the test"
+            "messages": {
+              "type": "array",
+              "description": "Array of AALang messages to send during test execution",
+              "required": true,
+              "items": {
+                "type": "object",
+                "description": "AALang message following AALang message format (see index.jsonld ex:Message)",
+                "required": ["routingGraph", "payload"],
+                "properties": {
+                  "routingGraph": {
+                    "type": "object",
+                    "description": "Message routing graph specifying target actor/persona",
+                    "required": true
+                  },
+                  "payload": {
+                    "type": "object",
+                    "description": "Message payload containing message content",
+                    "required": true
+                  },
+                  "metadata": {
+                    "type": "object",
+                    "description": "Optional message metadata",
+                    "optional": true
+                  }
+                }
+              }
+            },
+            "messageSequence": {
+              "type": "array",
+              "description": "Optional: Ordered sequence of messages if order matters",
+              "optional": true,
+              "items": {
+                "type": "number",
+                "description": "Index into messages array indicating send order"
+              }
+            },
+            "testContext": {
+              "type": "object",
+              "description": "Optional: Additional context for test (e.g., initial state, preconditions)",
+              "optional": true
+            }
           }
         },
         "outputs": {
           "type": "object",
-          "description": "Expected output definitions",
+          "description": "Expected observed results from test execution",
+          "required": true,
           "properties": {
-            "expectedOutput": "any",
-            "description": "Expected result or behavior from the test"
+            "observedMessages": {
+              "type": "array",
+              "description": "Expected messages observed in response (messages sent by actors under test)",
+              "required": false,
+              "items": {
+                "type": "object",
+                "description": "Expected AALang message following AALang message format",
+                "properties": {
+                  "routingGraph": {
+                    "type": "object",
+                    "description": "Expected routing graph (from actor, to actor/persona)"
+                  },
+                  "payload": {
+                    "type": "object",
+                    "description": "Expected message payload content"
+                  },
+                  "semanticContent": {
+                    "type": "string",
+                    "description": "Optional: Expected semantic content of message (for semantic matching)"
+                  }
+                }
+              }
+            },
+            "observedStateChanges": {
+              "type": "object",
+              "description": "Expected state changes observed (if actor's mode isolated state is readable)",
+              "required": false,
+              "properties": {
+                "mode": {
+                  "type": "string",
+                  "description": "Mode whose state changed"
+                },
+                "stateBefore": {
+                  "type": "object",
+                  "description": "Expected state before message processing"
+                },
+                "stateAfter": {
+                  "type": "object",
+                  "description": "Expected state after message processing"
+                },
+                "stateChanges": {
+                  "type": "object",
+                  "description": "Expected specific state changes (field-level changes)"
+                }
+              }
+            },
+            "observedBehavior": {
+              "type": "object",
+              "description": "Expected behavioral observations (actor actions, mode transitions, etc.)",
+              "required": false,
+              "properties": {
+                "actorActions": {
+                  "type": "array",
+                  "description": "Expected actions taken by actors"
+                },
+                "modeTransitions": {
+                  "type": "array",
+                  "description": "Expected mode transitions (from mode, to mode)"
+                },
+                "messageAccepted": {
+                  "type": "boolean",
+                  "description": "Expected: whether message was accepted by target actor"
+                },
+                "messageRejected": {
+                  "type": "boolean",
+                  "description": "Expected: whether message was rejected by target actor (with rejection reason if applicable)"
+                }
+              }
+            }
           }
         },
         "assertions": {
@@ -214,11 +353,8 @@
       },
       "testFileOrganization": {
         "location": "tests/ subdirectory by default (user-configurable)",
-        "naming": {
-          "unitTests": "{product-name}-unit-tests.jsonld",
-          "integrationTests": "{product-name}-integration-tests.jsonld",
-          "systemTests": "{product-name}-system-tests.jsonld"
-        }
+        "naming": "ex:TestTypes.types",
+        "note": "File naming patterns are defined in ex:TestTypes.types[].filePattern for each test type"
       },
       "testExecution": {
         "sequential": "default execution mode",

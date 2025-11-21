@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-**Yes, AALang is unequivocally a programming language.** This document addresses common objections and provides a comprehensive argument establishing AALang as a legitimate, formal programming language. AALang meets all fundamental criteria for programming languages: it has a formal syntax, well-defined semantics, a clear execution model, the ability to express computations, and a complete specification. The fact that it executes within LLMs rather than compiling to assembly, binary, or used in traditionalinterpreters does not disqualify it—it simply represents a novel execution environment.
+**Yes, AALang is a programming language.** This document addresses common objections and provides a comprehensive argument establishing AALang as a legitimate, formal programming language. AALang meets all fundamental criteria for programming languages: it has a formal syntax, well-defined semantics, a clear execution model, the ability to express computations, and a complete specification. The fact that it executes within LLMs rather than compiling to assembly, binary, or used in traditionalinterpreters does not disqualify it—it simply represents a novel execution environment.
 
 ## What Defines a Programming Language?
 
@@ -198,7 +198,6 @@ AALang combines declarative structure with imperative-like execution semantics.
 
 Many esoteric languages are recognized despite being impractical:
 
-- **Brainfuck**: Extremely minimal, yet a language
 - **Whitespace**: Uses only whitespace, yet a language
 - **Malbolge**: Designed to be difficult, yet a language
 

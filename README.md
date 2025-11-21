@@ -190,6 +190,37 @@ GAB uses a **4-mode-13-actor** pattern with a structured workflow:
 
 **After Generation**: Once GAB generates your initial product, follow the [GAB Development Workflow](README_support_docs/gab-development-workflow.md) to refine and test your product. This workflow guides you through actor self-checks, non-actor validation, and system-level testing to ensure your product is stable and production-ready.
 
+## Testing Your AALang Products with AATest
+
+**AATest** is a comprehensive testing framework designed specifically for AALang products. It provides structured, message-based testing that evaluates test needs, generates test files, executes tests, and reports results.
+
+### Overview
+
+AATest follows the same **4-mode-13-actor** pattern as GAB, making it a natural companion for testing GAB-generated products. It supports three types of tests:
+
+- **MessageResponseTest**: Tests how individual actors respond to messages - tests individual actor responsibilities in isolation
+- **MessageFlowTest**: Tests message flow between actors, mode transitions, and state management - tests actor interactions
+- **AgentWorkflowTest**: Tests complete agent workflows from user perspective - tests end-to-end workflows and full agent execution
+
+All AATest tests are message-based: tests send AALang messages to actors and observe resulting messages, state changes, and behaviors. This aligns perfectly with AALang's message-passing architecture.
+
+### Key Features
+
+- **Automatic Test Generation**: Analyzes your AALang product and generates appropriate test files
+- **LLM-Native Execution**: Tests execute within the LLM context, leveraging AALang's execution model
+- **Comprehensive Assertions**: Supports semantic assertions, pattern matching, structural verification, and more
+- **Test Fixtures and Mocks**: Built-in support for mock actors and test fixtures
+- **Detailed Reporting**: Generates comprehensive test results with pass/fail status, execution logs, and summary statistics
+
+### Using AATest
+
+1. **Load AATest**: Add the `AATest/AATest.jsonld` and `AATest/AATest_spec.jsonld` files into your LLM environment
+2. **Provide Product Path**: AATest will request the path to your AALang product file
+3. **Follow the Workflow**: AATest guides you through Test Need Evaluation → Test Generation → Test Execution → Test Result Reporting
+4. **Review Results**: Check the generated test results file for detailed execution logs
+
+For complete documentation, see the [AATest README](AATest/README_AATest.md).
+
 ## Getting Started
 
 ### Prerequisites
