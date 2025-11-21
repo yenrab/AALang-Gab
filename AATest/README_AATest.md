@@ -152,14 +152,23 @@ Test files are organized in a `tests/` subdirectory by default (user-configurabl
 
 ## Test Execution
 
-### Execution Modes
-- **Sequential**: Default execution mode (tests run one at a time)
-- **Parallel**: Optional parallel execution for faster test runs
+### Execution Mode
+- **Sequential**: Tests run one at a time in order (by priority, then alphabetically by test name)
 
 ### Filtering
 - Filter tests by test type
 - Execute single tests for debugging
-- Verbose output mode for detailed debugging
+
+### Verbose Mode
+Verbose mode provides detailed execution logs for debugging. To enable verbose mode, simply request it when running tests. For example:
+- "Run tests in verbose mode"
+- "Execute tests with verbose output"
+- "Run [test name] with verbose logging"
+
+When verbose mode is enabled, AATest includes detailed execution logs for each test step:
+- **For MessageResponseTests**: Step-by-step logs with input, output, LLM reasoning, and mock interactions
+- **For MessageFlowTests**: Interaction logs, transition logs, state operation logs, and mock interactions
+- **For AgentWorkflowTests**: Workflow execution logs, user interaction logs, agent response logs, and mode transition logs
 
 ### Test Results
 - **Location**: `tests/{product-name}-test-results.md`
@@ -209,6 +218,19 @@ AATest: [Test Execution Mode]
         MessageResponseTest: test_actor_1_basic_response... PASSED
         MessageFlowTest: test_actor_communication... PASSED
         ..."
+        
+You: "Run tests in verbose mode"
+
+AATest: [Test Execution Mode]
+        "Executing tests with verbose output...
+        MessageResponseTest: test_actor_1_basic_response
+        Step: Loading test file
+        Step: Adopting actor definition
+        Input: {routingGraph: {...}, payload: {...}}
+        Output: {response: {...}}
+        Reasoning: [LLM reasoning used]
+        Mock Interactions: [...]
+        ... PASSED"
         
 AATest: [Test Result Reporting Mode]
         "Test execution complete!
