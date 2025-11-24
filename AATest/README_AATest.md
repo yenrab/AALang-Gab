@@ -170,6 +170,18 @@ When verbose mode is enabled, AATest includes detailed execution logs for each t
 - **For MessageFlowTests**: Interaction logs, transition logs, state operation logs, and mock interactions
 - **For AgentWorkflowTests**: Workflow execution logs, user interaction logs, agent response logs, and mode transition logs
 
+### Large Test Suite Best practices
+
+For test suites with large numbers of tests (over ~50 tests), it is recommended to execute each group of tests one at a time rather than running all tests together. This best practice applies to:
+
+- **MessageResponseTest** groups: Execute all message-response tests together, then move to the next group
+- **MessageFlowTest** groups: Execute all message-flow tests together, then move to the next group
+- **AgentWorkflowTest** groups: Execute all agent-workflow tests together, then move to the next group
+
+Executing test groups separately helps manage execution complexity, improves reliability, and makes it easier to identify and debug issues within specific test categories.
+
+You can then ask for a testing summary if you want one that combines the results of the three testing reports.
+
 ### Test Results
 - **Location**: `tests/{product-name}-test-results.md`
 - **Includes**: Pass/fail status, detailed execution logs, summary statistics
