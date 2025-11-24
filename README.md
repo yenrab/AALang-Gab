@@ -39,15 +39,22 @@ Learn more at: **[https://aalang.org](https://aalang.org)**
 
 ## Tested On
 
-Execution capability testing has been conducted using the [babylon 5 fan game](https://github.com/yenrab/fab-fan), which provides a medium to medium-high level of complexity for evaluating AALang capabilities. Direct testing of GAB and AATest is coming soon. Testing on other platforms coming soon.
+Generation of products using GAB and tested using AATest has been tested.
 
 Works on:
 - Cursor (In Agent Mode)
-  - Auto (running, building, and testing)
-  - composer1 (running, not building and testing)
-  - claude-4.5-sonnet-thinking (running, not building and testing)
-  - grok-code-fast-1 (running, not building and testing)
-  - gemini-3-pro-preview (running, not building and testing)
+  - Auto
+
+
+Execution capability testing has been conducted using the [babylon 5 fan game](https://github.com/yenrab/fab-fan), which provides a medium to medium-high level of complexity for evaluating AALang capabilities.
+
+Works on:
+- Cursor (In Agent Mode)
+  - Auto
+  - composer1 
+  - claude-4.5-sonnet-thinking 
+  - grok-code-fast-1 
+  - gemini-3-pro-preview
 
 ## Actors and Personas
 
