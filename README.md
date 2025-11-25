@@ -49,12 +49,20 @@ Works on:
 **Execution** capability testing has been conducted using the [babylon 5 fan game](https://github.com/yenrab/fab-fan), which provides a medium to medium-high level of complexity for evaluating AALang capabilities.
 
 Works on:
+- Ollama 
+  - GUI use @context
+  - HTTP server use system prompt
+- LM Studio
+  - GUI use system prompt
+  -HTTP server use system prompt
 - Cursor (In Agent Mode)
   - Auto
   - composer1 
   - claude-4.5-sonnet-thinking 
   - grok-code-fast-1 
   - gemini-3-pro-preview
+
+**Note** Stateful AALang tools created by GAB need significant context windows to not loose the instructions and states. Cursor's summaries appear to retain the behaviors and states of AALang tools. Small models, 4b, quickly run out of context window space and loose the tool.
 
 ## Actors and Personas
 
